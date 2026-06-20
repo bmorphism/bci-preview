@@ -2,14 +2,16 @@
 <html><head><meta charset="utf-8"><title>bci.place preview — redirecting…</title>
 <script>
 // Stable front for the ephemeral morph preview host.
-// On instance churn, update TARGET (one line) and push — every link below keeps working.
-var TARGET = "https://files-morphvm-ktavj9em.http.cloud.morph.so";
+// Live target is read from target.txt — on instance churn, update ONLY that file.
+var FALLBACK = "https://files-morphvm-ktavj9em.http.cloud.morph.so";
 var rest = location.pathname.replace(/^\/bci-preview/, "") + location.search + location.hash;
 if (rest === "" || rest === "/") rest = "/index.html";
-location.replace(TARGET + rest);
+fetch("/bci-preview/target.txt", {cache: "no-store"})
+  .then(function(r){ return r.text(); })
+  .then(function(t){ location.replace((t.trim() || FALLBACK) + rest); })
+  .catch(function(){ location.replace(FALLBACK + rest); });
 </script>
 </head><body style="font:16px/1.6 system-ui,sans-serif;max-width:680px;margin:3rem auto;padding:0 1rem">
 <h1>🌲 bci.place preview</h1>
-<p>Redirecting to the live forester host… if it doesn't, the preview instance may be down —
-<a id="l" href="https://files-morphvm-ktavj9em.http.cloud.morph.so/index.html">open it directly</a>.</p>
+<p>Redirecting to the live forester host… if it doesn't, the preview instance may be down.</p>
 </body></html>
